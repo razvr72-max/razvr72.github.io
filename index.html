@@ -129,12 +129,8 @@
             width: 10rem;
             height: 10rem;
             margin: 0 auto 2rem;
-            transition: filter 0.3s;
+            transition: opacity 0.3s;
             display: block;
-        }
-
-        body.light .logo {
-            filter: invert(1);
         }
 
         h1 {
@@ -618,8 +614,8 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="container">
-                <!-- Replace this URL with your actual logo -->
-                <img src="YOUR_LOGO_URL_HERE.png" alt="Astro Logo" class="logo" id="astroLogo">
+                <!-- Replace these URLs with your actual logos (dark theme logo and light theme logo) -->
+                <img src="https://i.postimg.cc/5yVRLCv6/Chat-GPT-Image-Jan-20-2026-09-25-55-PM.png" alt="Astro Logo" class="logo" id="astroLogo">
                 <h1>ASTRO</h1>
                 <p class="hero-description">
                     Want to experience OG Fortnite again? Join our Discord server and become part of the community. 
@@ -854,6 +850,16 @@
     </footer>
 
     <script>
+        // Logo URLs - Replace these with your actual logo URLs
+        const DARK_LOGO_URL = 'https://i.postimg.cc/5yVRLCv6/Chat-GPT-Image-Jan-20-2026-09-25-55-PM.png';  // Logo for dark theme (black background)
+        const LIGHT_LOGO_URL = 'https://i.postimg.cc/0294N7PF/Chat-GPT-Image-Jan-20-2026-09-25-51-PM.png'; // Logo for light theme (white background)
+
+        // Update logo based on theme
+        function updateLogo(isDarkTheme) {
+            const logo = document.getElementById('astroLogo');
+            logo.src = isDarkTheme ? DARK_LOGO_URL : LIGHT_LOGO_URL;
+        }
+
         // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
@@ -866,12 +872,14 @@
                 sunIcon.style.display = 'none';
                 moonIcon.style.display = 'block';
                 localStorage.setItem('theme', 'light');
+                updateLogo(false);
             } else {
                 body.classList.remove('light');
                 body.classList.add('dark');
                 sunIcon.style.display = 'block';
                 moonIcon.style.display = 'none';
                 localStorage.setItem('theme', 'dark');
+                updateLogo(true);
             }
         }
 
@@ -886,6 +894,9 @@
                 document.body.classList.add('light');
                 sunIcon.style.display = 'none';
                 moonIcon.style.display = 'block';
+                updateLogo(false);
+            } else {
+                updateLogo(true);
             }
         });
 
@@ -897,12 +908,12 @@
 
         function downloadBuild() {
             // Replace with your actual build download link
-            window.location.href = 'https://lootdest.org/s?AK0vRP7B';
+            window.location.href = 'YOUR_BUILD_DOWNLOAD_URL';
         }
 
         function joinDiscord() {
             // Replace YOUR_INVITE_CODE with your actual Discord invite code
-            window.open('https://discord.gg/eethHy5xM9', '_blank');
+            window.open('', '_blank');
         }
     </script>
 </body>
