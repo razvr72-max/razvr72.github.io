@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro - OG Fortnite Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: #000;
+            color: #fff;
+        }
+
+        body.light {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            border: 2px solid;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        body.dark .theme-toggle {
+            background-color: #fff;
+            color: #000;
+            border-color: #ccc;
+        }
+
+        body.dark .theme-toggle:hover {
+            background-color: #f0f0f0;
+        }
+
+        body.light .theme-toggle {
+            background-color: #000;
+            color: #fff;
+            border-color: #666;
+        }
+
+        body.light .theme-toggle:hover {
+            background-color: #1a1a1a;
+        }
+
+        .theme-toggle svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 5rem 0;
+            min-height: 600px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1631449061775-c79df03a44f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYW1pbmclMjBkYXJrJTIwcHVycGxlfGVufDF8fHx8MTc2ODY5NTMzMnww&ixlib=rb-4.1.0&q=80&w=1080');
+            background-size: cover;
+            background-position: center;
+        }
+
+        body.dark .hero-bg {
+            opacity: 0.1;
+        }
+
+        body.light .hero-bg {
+            opacity: 0.05;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        body.dark .hero-overlay {
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5), #000);
+        }
+
+        body.light .hero-overlay {
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.5), #fff);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .logo {
+            width: 10rem;
+            height: 10rem;
+            margin: 0 auto 2rem;
+            transition: filter 0.3s;
+            display: block;
+        }
+
+        body.light .logo {
+            filter: invert(1);
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-description {
+            font-size: 1.5rem;
+            max-width: 48rem;
+            margin: 0 auto 2rem;
+        }
+
+        body.dark .hero-description {
+            color: #d1d5db;
+        }
+
+        body.light .hero-description {
+            color: #374151;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            max-width: 75rem;
+            margin: 0 auto;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+            transition: all 0.3s;
+        }
+
+        body.dark .feature-card {
+            background-color: rgba(17, 24, 39, 0.5);
+            border-color: rgba(75, 85, 99, 0.5);
+        }
+
+        body.light .feature-card {
+            background-color: rgba(243, 244, 246, 0.5);
+            border-color: rgba(209, 213, 219, 0.5);
+        }
+
+        body.dark .feature-card:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        body.light .feature-card:hover {
+            border-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        body.dark .feature-icon {
+            background-color: #fff;
+            color: #000;
+        }
+
+        body.light .feature-icon {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .feature-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            color: #9ca3af;
+        }
+
+        body.dark .feature-description {
+            color: #d1d5db;
+        }
+
+        body.light .feature-description {
+            color: #374151;
+        }
+
+        /* Download Cards */
+        .download-card {
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark .download-card {
+            background-color: rgba(17, 24, 39, 0.4);
+            border-color: rgba(75, 85, 99, 0.5);
+        }
+
+        body.light .download-card {
+            background-color: rgba(243, 244, 246, 0.4);
+            border-color: rgba(209, 213, 219, 0.5);
+        }
+
+        .download-card.primary {
+            border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        body.light .download-card.primary {
+            border-color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .download-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .download-card h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .download-card .description {
+            margin-bottom: 0.75rem;
+        }
+
+        body.dark .download-card .description {
+            color: #d1d5db;
+        }
+
+        body.light .download-card .description {
+            color: #374151;
+        }
+
+        .version-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        body.dark .version-badge {
+            background-color: rgba(55, 65, 81, 0.5);
+            color: #e5e7eb;
+        }
+
+        body.light .version-badge {
+            background-color: rgba(209, 213, 219, 0.5);
+            color: #1f2937;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .features-list li {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        body.dark .features-list li {
+            color: #d1d5db;
+        }
+
+        body.light .features-list li {
+            color: #374151;
+        }
+
+        .features-list svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        body.dark .features-list svg {
+            color: #4ade80;
+        }
+
+        body.light .features-list svg {
+            color: #16a34a;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1.5rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #e5e7eb;
+        }
+
+        body.light .btn-primary {
+            background-color: #000;
+            color: #fff;
+        }
+
+        body.light .btn-primary:hover {
+            background-color: #1f2937;
+        }
+
+        .btn-secondary {
+            background-color: #374151;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        body.light .btn-secondary {
+            background-color: #d1d5db;
+            color: #000;
+        }
+
+        body.light .btn-secondary:hover {
+            background-color: #9ca3af;
+        }
+
+        .btn-discord {
+            background-color: #5865F2;
+            color: #fff;
+            padding: 1.5rem 2rem;
+            font-size: 1.125rem;
+            width: auto;
+        }
+
+        .btn-discord:hover {
+            background-color: #4752C4;
+        }
+
+        /* Installation Guide */
+        .guide-box {
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+            max-width: 56rem;
+            margin: 0 auto;
+        }
+
+        body.dark .guide-box {
+            background-color: rgba(17, 24, 39, 0.5);
+            border-color: #374151;
+        }
+
+        body.light .guide-box {
+            background-color: rgba(243, 244, 246, 0.5);
+            border-color: #d1d5db;
+        }
+
+        .guide-box h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .guide-list {
+            list-style: none;
+        }
+
+        .guide-list li {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        body.dark .guide-list li {
+            color: #d1d5db;
+        }
+
+        body.light .guide-list li {
+            color: #374151;
+        }
+
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        body.dark .step-number {
+            background-color: #fff;
+            color: #000;
+        }
+
+        body.light .step-number {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        body.dark .step-title {
+            color: #fff;
+        }
+
+        body.light .step-title {
+            color: #000;
+        }
+
+        .step-description {
+            font-size: 0.875rem;
+        }
+
+        /* Community Section */
+        .community {
+            text-align: center;
+            margin-top: 5rem;
+        }
+
+        .community h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .community p {
+            max-width: 42rem;
+            margin: 0 auto 2rem;
+        }
+
+        body.dark .community p {
+            color: #d1d5db;
+        }
+
+        body.light .community p {
+            color: #374151;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid;
+            margin-top: 5rem;
+            padding: 2rem 0;
+        }
+
+        body.dark footer {
+            border-color: #1f2937;
+        }
+
+        body.light footer {
+            border-color: #d1d5db;
+        }
+
+        footer .container {
+            text-align: center;
+        }
+
+        body.dark footer {
+            color: #9ca3af;
+        }
+
+        body.light footer {
+            color: #6b7280;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        footer .small {
+            font-size: 0.875rem;
+        }
+
+        .downloads-subtitle {
+            text-align: center;
+            font-size: 1.125rem;
+            margin-bottom: 3rem;
+        }
+
+        body.dark .downloads-subtitle {
+            color: #d1d5db;
+        }
+
+        body.light .downloads-subtitle {
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .hero-description {
+                font-size: 1.125rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .logo {
+                width: 8rem;
+                height: 8rem;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg class="moon-icon" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="container">
+                <!-- Replace this URL with your actual logo -->
+                <img src="YOUR_LOGO_URL_HERE.png" alt="Astro Logo" class="logo" id="astroLogo">
+                <h1>ASTRO</h1>
+                <p class="hero-description">
+                    Want to experience OG Fortnite again? Join our Discord server and become part of the community. 
+                    Download our custom launcher, connect with fellow players, and jump back into the classic experience you've been missing!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Is Astro Safe?</h2>
+            <div class="grid grid-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Yes, Open Source</h3>
+                    <p class="feature-description">Fully open source code that you can review and verify. Complete transparency for your peace of mind.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Yes, No Malware</h3>
+                    <p class="feature-description">Built with security in mind. No malware, no suspicious code, no hidden processes. Just pure gaming.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Yes, Community Trusted</h3>
+                    <p class="feature-description">Trusted by thousands of players worldwide. Regular security audits and active community monitoring.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Downloads Section -->
+    <section class="section" id="downloads">
+        <div class="container">
+            <h2 class="section-title">Downloads</h2>
+            <p class="downloads-subtitle">Get everything you need to start playing</p>
+            
+            <div class="grid grid-2">
+                <div class="download-card primary">
+                    <h3>Astro Launcher</h3>
+                    <p class="description">The official launcher to manage and launch your Astro builds</p>
+                    <span class="version-badge">Version 1.2.0</span>
+                    
+                    <ul class="features-list">
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Easy installation and updates</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Auto-update functionality</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Multiple build management</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>User-friendly interface</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Built-in settings configuration</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="btn btn-primary" onclick="downloadLauncher()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Download Astro Launcher
+                    </button>
+                </div>
+
+                <div class="download-card">
+                    <h3>Astro Build</h3>
+                    <p class="description">The latest Astro build for the ultimate classic experience</p>
+                    <span class="version-badge">Version 3.5.1</span>
+                    
+                    <ul class="features-list">
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Optimized for performance</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Classic maps and gameplay</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Regular bug fixes</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Anti-cheat protection</span>
+                        </li>
+                        <li>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Custom server support</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="btn btn-secondary" onclick="downloadBuild()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Download Astro Build
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Guide -->
+    <section class="section">
+        <div class="container">
+            <div class="guide-box">
+                <h2>Quick Installation Guide</h2>
+                <ol class="guide-list">
+                    <li>
+                        <span class="step-number">1</span>
+                        <div>
+                            <div class="step-title">Download the Launcher</div>
+                            <p class="step-description">Click the download button above to get the Astro Launcher</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">2</span>
+                        <div>
+                            <div class="step-title">Create an Account</div>
+                            <p class="step-description">Go to our Discord server to create your Astro account</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">3</span>
+                        <div>
+                            <div class="step-title">Sign In</div>
+                            <p class="step-description">Go back to the launcher and sign in with your credentials</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">4</span>
+                        <div>
+                            <div class="step-title">Download the Build</div>
+                            <p class="step-description">Download our build that we're hosting</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">5</span>
+                        <div>
+                            <div class="step-title">Extract the Build</div>
+                            <p class="step-description">Extract the downloaded build files to your desired location</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">6</span>
+                        <div>
+                            <div class="step-title">Import the Build</div>
+                            <p class="step-description">Import the extracted build in our launcher</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">7</span>
+                        <div>
+                            <div class="step-title">Launch and Play</div>
+                            <p class="step-description">Press launch and that's it! Enjoy the game!</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="section">
+        <div class="container">
+            <div class="community">
+                <h2>Join Our Community</h2>
+                <p>Connect with other players, get support, and stay updated with the latest news</p>
+                <button class="btn btn-discord" onclick="joinDiscord()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                    Join Discord
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Astro Project. All rights reserved.</p>
+            <p class="small">This is a community project and is not affiliated with Epic Games.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        });
+
+        // Download functions
+        function downloadLauncher() {
+            // Replace with your actual launcher download link
+            window.location.href = 'YOUR_LAUNCHER_DOWNLOAD_URL';
+        }
+
+        function downloadBuild() {
+            // Replace with your actual build download link
+            window.location.href = 'YOUR_BUILD_DOWNLOAD_URL';
+        }
+
+        function joinDiscord() {
+            // Replace YOUR_INVITE_CODE with your actual Discord invite code
+            window.open('https://discord.gg/YOUR_INVITE_CODE', '_blank');
+        }
+    </script>
+</body>
+</html>
